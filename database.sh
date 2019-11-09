@@ -4,7 +4,7 @@ current_time=$(date "+%Y.%m.%d-%H.%M.%S")
 
 function backup(){
 	# Backup
-	docker exec $container /usr/bin/mysqldump -u $user --password=$passwd $database > $file$current_time.sql
+	docker exec $container /usr/bin/mysqldump -u $user --password=$passwd $database > $file.sql
 }
 
 function restore() {
