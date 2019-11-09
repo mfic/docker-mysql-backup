@@ -2,4 +2,4 @@
 */*
 !.gitignore
 !env-sample
-!mysql-backup-restore.sh
+!database.sh
