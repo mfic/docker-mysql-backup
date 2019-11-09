@@ -12,6 +12,16 @@ function restore() {
 	cat $file | docker exec -i $container /usr/bin/mysql -u $user --password=$passwd $database
 }
 
+function remove_old() {
+	# Remove old backups
+	find $backup_dir -name "backup-$container-*.sql" -type f -mtime +$time -exec rm -f {}
+}
+
+# Check if $backup_dir folder exists
+if [[ ! -d $backup_dir ]]
+then
+	mkdir $backup_dir
+fi
 # Call definitions
 
 if [[ -f $1 ]]
@@ -24,9 +34,11 @@ fi
 
 case "$2" in
 	backup)
-		file="./db/backup-$container-$current_time.sql"
+		file="$backup_dir/backup-$container-$current_time.sql"
 		backup
 		echo "Backup completed!"
+		remove_old
+		echo "Deleted backups older than $time"
 		;;
 
 	restore)
