@@ -25,14 +25,16 @@ fi
 case "$2" in
 	backup)
 		file="./db/backup-$container-$current_time.sql"
-		echo "Backup $container $passwd $database $file"
+		backup
+		echo "Backup completed!"
 		;;
 
 	restore)
 		file=$3
 		if [[ -f "$file" ]]
 		then
-			echo "Restore $container $passwd $database $file"
+			restore
+			echo "Restore completed"
 		else 
 			echo "File not found. Please specify correct path to the MySQL backup you wish to restore."
 		fi
