@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# Save the current time for the file name
 current_time=$(date "+%Y.%m.%d-%H.%M.%S")
 
 function backup(){
@@ -14,16 +15,17 @@ function restore() {
 
 function remove_old() {
 	# Remove old backups
-	find $backup_dir -name "backup-$container-*.sql" -type f -mtime +$time -exec rm -f {}
+	if find $backup_dir -name "backup-$container-*.sql" -type f -mtime +$time -exec rm -f {};
+	then
+		echo "Deleted backups older than $time days"
+	else
+		echo "No Backups deleted."
+
 }
 
-# Check if $backup_dir folder exists
-if [[ ! -d $backup_dir ]]
-then
-	mkdir $backup_dir
-fi
 # Call definitions
 
+# First sourcing of env file!
 if [[ -f $1 ]]
 then
 	source $1
@@ -32,13 +34,18 @@ else
 	exit 1
 fi
 
+# Check if $backup_dir folder exists
+if [[ ! -d $backup_dir ]]
+then
+	mkdir -p $backup_dir
+fi
+
 case "$2" in
 	backup)
 		file="$backup_dir/backup-$container-$current_time.sql"
 		backup
 		echo "Backup completed!"
 		remove_old
-		echo "Deleted backups older than $time"
 		;;
 
 	restore)
