@@ -5,7 +5,7 @@ current_time=$(date "+%Y.%m.%d-%H.%M.%S")
 
 function backup(){
 	# Backup
-	docker exec $container /usr/bin/mysqldump -u $user --password=$passwd $database > $file.sql
+	docker exec $container /usr/bin/mysqldump -u $user --password=$passwd $database > $file
 }
 
 function restore() {
@@ -15,12 +15,21 @@ function restore() {
 
 function remove_old() {
 	# Remove old backups
-	if find $backup_dir -name "backup-$container-*.sql" -type f -mtime +$time -exec rm -f {};
+	switch="print"
+	old_files="$(find $backup_dir -mindepth 1 -depth -name "backup-$container-*.sql" -type f -mtime +$time -$switch)"
+	if [[ $old_files ]]
 	then
-		echo "Deleted backups older than $time days"
+		counter=0
+		for file in $old_files
+		do
+			echo "Deleting: $file"
+			rm -f $file
+			((counter++))
+		done
+		echo "Deleted $counter backup(s) older than $time days"
 	else
 		echo "No Backups deleted."
-
+	fi
 }
 
 # Call definitions
@@ -37,7 +46,11 @@ fi
 # Check if $backup_dir folder exists
 if [[ ! -d $backup_dir ]]
 then
+	echo "Backup directory not found. Create..."
 	mkdir -p $backup_dir
+	echo "Backup directory created: $backup_dir"
+else
+	echo "Backup directory: $backup_dir"
 fi
 
 case "$2" in
