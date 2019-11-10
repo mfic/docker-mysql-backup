@@ -1,1 +1,61 @@
-To be updated
+* Purpose
+    With this script you can do reasy backups and restores of you MySQL Database that is running in Docker.
+
+* Installation
+    Clone the repository on your server.
+
+        #+begin_src bash
+            git clone https://github.com/mfic/docker-mysql-backup.git
+        #+end_src
+
+* Usage
+** evv-file
+    You need to create an env file based on the env-example provided in this repository. I would recommend_src to name it the same as the docker container.
+        #+begin_src bash
+            cp -r env-sample "container_name"
+        #+end_src
+
+** Backup
+    Next you can run the following command to backup the database. In this case "env-file" is the previously created environment file with the database details.
+        #+begin_src bash
+            ./database.sh "env-file" backup
+        #+end_src
+** Restore
+    In order to restore the database you can run the following command, where "file" is the previously backedup database file
+        #+begin_src bash
+            ./database.sh "env-file" restore "file"
+        #+end_src
+
+** Remove
+    In order to remove old backups, that are older than specified time in env-file
+        #+begin_src bash
+            ./database.sh "env-file" remove
+        #+end_src
+        
+* Examples
+    - container_name: docker_db
+    - env-file: docker_db_env
+        - content:
+            #+begin_src 
+            container="docker_db"
+            user="db_user"
+            passwd="password"
+            database="app_database"
+            backup_dir="./db"
+            time="30
+        #+end_src
+
+** Backup
+    #+begin_src bash
+        ./database.sh docker_db_env backup
+    #+end_src
+
+** Restore
+    #+begin_src bash
+        ./database.sh docker_db_env restore ./db/backup-app_database-2019.11.10-10.20.30.sql
+    #+end_src
+
+** Remove
+    #+begin_src bash
+        ./database.sh docker_db_env remove
+    #+end_src
