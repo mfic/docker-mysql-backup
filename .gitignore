@@ -1,6 +1,5 @@
 *
 */*
-!db
 !.gitignore
 !env-sample
 !database.sh
