@@ -15,8 +15,7 @@ function restore() {
 
 function remove_old() {
 	# Remove old backups
-	switch="print"
-	old_files="$(find $backup_dir -mindepth 1 -depth -name "backup-$container-*.sql" -type f -mtime +$time -$switch)"
+	old_files="$(find $backup_dir -mindepth 1 -depth -name "backup-$container-*.sql" -type f -mtime +$time -print)"
 	if [[ $old_files ]]
 	then
 		counter=0
@@ -58,7 +57,6 @@ case "$2" in
 		file="$backup_dir/backup-$container-$current_time.sql"
 		backup
 		echo "Backup completed!"
-		remove_old
 		;;
 
 	restore)
@@ -70,6 +68,10 @@ case "$2" in
 		else 
 			echo "File not found. Please specify correct path to the MySQL backup you wish to restore."
 		fi
+		;;
+
+	remove)
+		remove_old
 		;;
 
 	*)
